@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>홈</title>
+  <style>
+    /* 전체 페이지 스타일 */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      background: linear-gradient(to right, #ffffff, #4caf50); /* 초록색 그라데이션 배경 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-align: center;
+      flex-direction: column;
+    }
+
+    /* 페이지 제목 스타일 */
+    h1 {
+      font-size: 60px;
+      color: #ffffff;
+      font-weight: 800;
+      margin-bottom: 40px;
+      text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+    }
+
+    /* 서브 제목 스타일 */
+    h2 {
+      font-size: 48px;
+      color: #ffffff;
+      margin-bottom: 20px;
+      font-weight: 700;
+      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.3);
+    }
+
+    /* 사용자 이름 스타일 */
+    .username {
+      font-size: 30px;
+      color: #ffffff;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 40px;
+    }
+
+    /* 본문 내용 스타일 */
+    p {
+      font-size: 22px;
+      color: #ffffff;
+      line-height: 1.8;
+      margin-top: 20px;
+      margin-bottom: 40px;
+      font-weight: 300;
+    }
+
+    /* 위젯 컨테이너 스타일 (가로로 배열) */
+    .widget-container {
+      display: flex;
+      justify-content: space-between;
+      width: 90%;
+      max-width: 1200px;
+      margin-top: 50px;
+      gap: 30px;
+      padding: 0 20px;
+      flex-wrap: nowrap; /* 가로로 한 줄에 나열되게 설정 */
+    }
+
+    /* 위젯 카드 스타일 */
+    .widget {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      width: 32%; /* 세 개의 카드가 균등하게 배치될 수 있도록 */
+      transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+      position: relative;
+    }
+
+    .widget:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .widget::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 10px;
+      background: linear-gradient(to right, #4CAF50, #81C784);
+      border-radius: 15px 15px 0 0;
+    }
+
+    .widget h3 {
+      font-size: 26px;
+      color: #333;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+
+    .widget p {
+      font-size: 18px;
+      color: #555;
+      margin-bottom: 25px;
+    }
+
+    /* 버튼 스타일 */
+    .button {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 16px 36px;
+      border: none;
+      border-radius: 50px;
+      font-size: 18px;
+      text-decoration: none;
+      text-align: center;
+      margin-top: 15px;
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      width: 180px;
+    }
+
+    .button:hover {
+      background-color: #45a049;
+      transform: translateY(-4px);
+      box-shadow: 0 14px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    /* 신규 도서 추가 버튼 스타일 || 임시 */
+    .add-book-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: #4CAF50;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      text-decoration: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    /* 반응형 스타일 */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 48px;
+      }
+
+      h2 {
+        font-size: 38px;
+      }
+
+      .username {
+        font-size: 26px;
+      }
+
+      .button {
+        padding: 14px 30px;
+        font-size: 16px;
+      }
+
+      .widget-container {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .widget {
+        width: 90%; /* 모바일에서는 위젯들이 더 넓게 표시되도록 */
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- 페이지 제목 -->
+<h1>도서 관리 시스템</h1>
+
+<!-- 로그인 성공 메시지와 사용자 이름 표시 -->
+<p>환영합니다! 도서 관리 프로그램에 오신 것을 환영합니다.</p>
+
+<!-- 신규 도서 추가 버튼 || 임시-->
+<a href="http://localhost:3000/books/register" class="add-book-button">신규 도서 추가</a>
+
+<!-- 위젯 영역 (가로로 배치) -->
+<div class="widget-container">
+  <div class="widget">
+    <h3>도서 리스트</h3>
+    <p>도서 목록을 확인하고 관리하세요.</p>
+    <a href="/books" class="button">도서 리스트</a>
+  </div>
+
+  <div class="widget">
+    <h3>대출 리스트</h3>
+    <p>현재 대출 중인 도서를 확인하세요.</p>
+    <a href="/borrow" class="button">대출한 도서 리스트</a>
+  </div>
+
+  <div class="widget">
+    <h3>회원 정보</h3>
+    <p>회원 정보를 수정하거나 확인하세요.</p>
+    <a href="/member/info" class="button">회원 정보</a>
+  </div>
+</div>
+
+</body>
+</html>

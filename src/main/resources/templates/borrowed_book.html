@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대출한 도서 리스트</title>
+  <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        .book-list {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 100%;
+        }
+        .book-list th, .book-list td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .book-list th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .return-button {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .return-button:hover {
+            background-color: #c9302c;
+        }
+    </style>
+</head>
+<body>
+
+<h1>대출한 도서 리스트</h1>
+
+<table class="book-list">
+  <thead>
+  <tr>
+    <th>loanId</th>
+    <th>memberId</th>
+    <th>isbn</th>
+    <th>loandate</th>
+    <th>returndeudate</th>
+    <th>getLoandate</th>
+    <th>returnDate</th>
+    <th>overdueStatus</th>
+
+    <th>Action</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="loan : ${loans}">
+    <td th:text="${loan.loanId}"></td>
+    <td th:text="${loan.memberId}"></td>
+    <td th:text="${loan.isbn}"></td>
+    <td th:text="${loan.loandate}"></td>
+    <td th:text="${loan.returndeudate}"></td>
+    <td th:text="${loan.getLoandate}"></td>
+    <td th:text="${loan.returnDate}"></td>
+    <td th:text="${loan.overdueStatus}"></td>
+    <td>
+      <form th:action="@{/book/return}" method="post">
+        <input type="hidden" th:name="loanId" th:value="${loan.loanId}" />
+        <button type="submit" class="return-button">반납</button>
+      </form>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+</body>
+</html>

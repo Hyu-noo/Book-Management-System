@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>회원 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .profile-info {
+            margin-top: 30px;
+        }
+        .profile-info p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px 0;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn:hover {
+            opacity: 0.8;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>회원 정보</h1>
+
+    <div class="profile-info">
+        <!-- 회원 정보 출력 부분 -->
+        <p><strong>회원 ID:</strong> <span th:text="${member.memberId}"></span></p>
+        <p><strong>회원 이름:</strong> <span th:text="${member.memberName}"></span></p>
+        <p><strong>전화번호:</strong> <span th:text="${member.phoneNumber}"></span></p>
+        <p><strong>주소:</strong> <span th:text="${member.address}"></span></p>
+        <p><strong>가입일:</strong> <span th:text="${member.joinDate}"></span></p>
+    </div>
+
+    <!-- 회원 탈퇴 버튼 -->
+    <form action="/member/delete" method="post" onsubmit="return confirm('정말로 회원을 탈퇴하시겠습니까?');">
+        <!-- memberId를 hidden으로 전달 -->
+        <input type="hidden" name="memberId" th:value="${member.memberId}">
+        <button type="submit" class="btn btn-danger">회원 탈퇴</button>
+    </form>
+
+
+    <!-- 뒤로 가기 버튼 -->
+    <a href="/member/dashboard" class="btn">뒤로 가기</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,459 @@
+--  도서관 관리 프로그럄 DB 구축
+--<실습1> 대학 학사를 위한 사용자생성
+--<실습2> 대학 학사 DB의 테이블 생성
+--<실습3> 대학 학사 DB의 데이터 삽입
+
+--... by Hyun Woo 
+--ALTER session set "_ORACLE_SCRIPT"=true;
+DROP USER book CASCADE; -- 기존 사용자 삭제(현재 접속되어 있으면 삭제 안 됨)
+	-- CASCADE option : 관련 스키마 개체들도 함께 삭제.  Default는 No Action
+CREATE USER book IDENTIFIED BY 1234  -- 사용자 ID : LIB, 비밀번호 : 1234
+    DEFAULT TABLESPACE USERS
+    TEMPORARY TABLESPACE TEMP;
+GRANT connect, resource, dba TO book; -- 권한 부여
+
+
+
+CREATE TABLE Member (
+    memberId VARCHAR(20) PRIMARY KEY, 
+    memberpassword VARCHAR(100) NOT NULL, 
+    membername VARCHAR(50) NOT NULL,
+    phoneNumber VARCHAR(15), 
+    address VARCHAR(200), 
+    membership VARCHAR(20), 
+    joinDate DATE 
+);
+
+CREATE TABLE Books (
+    ISBN VARCHAR(20) PRIMARY KEY,
+    Title VARCHAR(100) NOT NULL,
+    Author VARCHAR(50) NOT NULL,
+    Publisher VARCHAR(50) NOT NULL,
+    Genre VARCHAR(30),
+    IsBorrowed NUMBER(1) DEFAULT 0, -- 0: FALSE, 1: TRUE
+    RegistrationDate DATE
+);
+
+
+CREATE TABLE Purchase (
+    purchaseId INT PRIMARY KEY, 
+    memberId VARCHAR(20) NOT NULL, 
+    ISBN VARCHAR(20) NOT NULL, 
+    purchaseDate DATE NOT NULL, 
+    paymentMethod VARCHAR(20), 
+    purchaseStatus VARCHAR(20), 
+    FOREIGN KEY (memberId) REFERENCES Member(memberId),
+    FOREIGN KEY (ISBN) REFERENCES Books(ISBN) 
+);
+
+CREATE TABLE Loan (
+    loanId INT PRIMARY KEY , 
+    memberId VARCHAR(20) NOT NULL, 
+    ISBN VARCHAR(20) NOT NULL, 
+    loanDate DATE NOT NULL, 
+    returnDueDate DATE NOT NULL, 
+    returnDate DATE, 
+    overdueStatus NUMBER(1) DEFAULT 0, 
+    FOREIGN KEY (memberId) REFERENCES Member(memberId),
+    FOREIGN KEY (ISBN) REFERENCES Books(ISBN)
+);
+
+CREATE TABLE Publisher (
+    publisherCode INT PRIMARY KEY, -- Primary Key
+    publisherName VARCHAR(50) NOT NULL -- Publisher Name
+);
+
+
+----------------------------------------------------------------
+------------ <데이터 입력> ------------ 
+----------------------------------------------------------------
+
+-- 회원 테이블
+
+INSERT INTO Member (memberId, memberPassword, memberName, phoneNumber, address, membership, joinDate)VALUES('aaa','1234', '이현우', '010-5154-5115', '포항시 북구', 'gold', '2024-12-03');
+INSERT INTO Member (memberId, memberPassword, memberName, phoneNumber, address, membership, joinDate)VALUES('bbb','1234','민준규', '010-3243-5235', '부산광역시 연제구', 'diamond', '2024-11-27');
+INSERT INTO Member (memberId, memberPassword, memberName, phoneNumber, address, membership, joinDate) VALUES('ccc','1234', '신용균', '010-8565-6745', '포항시 남구', 'gold', '2024-11-25');
+INSERT INTO Member (memberId, memberPassword, memberName, phoneNumber, address, membership, joinDate) VALUES('ddd','1234', '김석준', '010-3456-6577', '서울특별시 평창동', 'bronze', '2024-11-28');
+INSERT INTO Member (memberId, memberPassword, memberName, phoneNumber, address, membership, joinDate) VALUES('eee','1234', '이성호', '010-1234-5678', '제주도 서귀포시', 'bronze', '2024-12-01');
+INSERT INTO Member (memberId, memberPassword, memberName, phoneNumber, address, membership, joinDate) VALUES('fff','1234', '박정현', '010-5643-7658', '울산 중구', 'silver', '2024-12-02');
+INSERT INTO Member (memberId, memberPassword, memberName, phoneNumber, address, membership, joinDate) VALUES('ggg','1234','박유현', '010-2456-5788', '인천 서초구', 'diamond', '2024-12-03');
+INSERT INTO Member (memberId, memberPassword, memberName, phoneNumber, address, membership, joinDate) VALUES('hhh','1234','임정서', '010-2465-6578', '광주 동구', 'bronze', '2024-11-26');
+INSERT INTO Member (memberId, memberPassword, memberName, phoneNumber, address, membership, joinDate) VALUES('iii','1234','신유진', '010-3546-5688', '대전 송파구', 'bronze', '2024-11-11');
+INSERT INTO Member (memberId, memberPassword, memberName, phoneNumber, address, membership, joinDate) VALUES('jjj','1234','손봉균', '010-1345-3467', '경기 남구', 'silver', '2024-11-20');
+
+-- 도서 테이블
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-001', '미움받을용기', '이현우', '한빛미디어', '픽션', 0, '2020-12-01');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-002', '성공의법칙', '최재훈', '더난출판사', '비즈니스', 0, '2019-02-01');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-003', '파이썬완벽가이드', '유용준', '인사이트', '컴퓨터', 1, '2020-06-15');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-004', '맛있는집밥의비밀', '정영윤', '예문사', '요리', 0, '2020-01-03');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-005', '별의기억', '윤수호', '문학동네', '픽션', 1, '2008-02-01');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-006', '베이킹의기초', '박아민', '우듬지', '요리', 0, '2003-03-12');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-007', '리더의조건', '김석영', '청림출판', '비즈니스', 1, '2015-11-27');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-008', '달빛속으로', '박수윤', '민음사', '픽션', 0, '2019-08-24');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-009', '국가론', '정민서', '을유문화사', '철학', 0, '2022-04-10');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-010', '부의추월차선', '최윤혜', '알에이치코리아', '비즈니스', 0, '2021-11-11');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-011', '사라진열쇠', '윤수서', '황금가지', '미스터리', 1, '2018-05-12');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-012', '고요한바다', '임영준', '창비', '픽션', 1, '2016-06-21');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-013', '철학의첫걸음', '이서서', '문예출판사', '철학', 0, '2005-07-01');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-014', '스타트업DNA', '김훈영', '한빛비즈', '비즈니스', 0, '2006-11-05');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-015', '협상의기술', '최아영', '비즈니스북스', '비즈니스', 0, '2007-05-07');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-016', '잃어버린시간', '최서석', '한빛출판사', '픽션', 0, '2024-01-17');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-017', '영원의숲', '최수혜', '위즈덤하우스', '픽션', 1, '2009-02-16');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-018', '인간과도덕의경계', '조윤성', '책세상', '철학', 0, '2010-11-05');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-019', '어둠속의빛', '정서서', '한겨레출판', '픽션', 1, '2011-12-15');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-020', '돈의흐름을읽어라', '윤성민', '부키', '비즈니스', 1, '2012-12-14');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-021', '고대도시의비밀', '조민현', '다락원', '역사', 1, '2013-01-17');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-022', '시간의조각들', '김서수', '동아출판', '픽션', 0, '2013-11-21');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-023', '오늘뭐먹지?', '이혜서', '웅진씽크빅', '요리', 0, '2015-02-18');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-024', '비즈니스트렌드2024', '박수지', '한국경제신문사', '비즈니스', 0, '2019-05-02');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-025', '팀워크의마법', '정혜민', '경영출판사', '비즈니스', 0, '2023-09-01');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-026', '창의적혁신의기술', '장진우', '미래지식', '비즈니스', 0, '2022-11-03');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-027', '바람의속삭임', '임지혜', '북하우스', '픽션', 0, '2021-07-10');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-028', '봄날의기억', '조아석', '미래의창', '픽션', 0, '2020-04-10');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-029', '기업가의탄생', '장아수', '미래북스', '비즈니스', 1, '2024-02-16');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-030', '맛의과학', '강우우', '요리연구소', '요리', 0, '2009-10-17');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-031', '하늘의약속', '장진아', '문학세계사', '픽션', 1, '2016-10-19');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-032', '브랜드는살아있다', '윤진현', '더퍼블릭', '비즈니스', 1, '2013-10-22');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-033', '눈물의강', '이윤진', '소담출판사', '픽션', 1, '2001-02-01');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-034', '중세의빛과그림자', '조호민', '중원서적', '역사', 1, '2012-03-22');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-035', '한국의독립운동', '임호성', '독립연구소', '비즈니스', 0, '2021-04-13');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-036', '세계대전의기록', '임혜수', '타임북스', '비즈니스', 0, '2022-11-15');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-037', '유럽대항해시대', '김영우', '바다출판사', '비즈니스', 0, '2023-02-10');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-038', '생각의지도', '조아지', '마음연구소', '픽션', 0, '2005-05-10');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-039', '진리의길', '최준아', '서원출판사', '픽션', 0, '2006-06-20');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-040', '잃어버린문명', '박진민', '고고박사', '역사', 0, '2009-08-21');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-041', '미각의혁명', '이영호', '키친스튜디오', '요리', 0, '2021-09-21');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-042', '피트니스의모든것', '강아훈', '헬스앤피트니스', '건강', 0, '2022-11-30');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-043', '건강하게나이들기', '박민혜', '에버그린출판', '건강', 1, '2008-12-27');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-044', '눈물의강', '조아수', '소담출판사', '픽션', 1, '2007-10-10');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-045', '어둠속의초대', '조우아', '검은달출판사', '미스터리', 0, '2003-12-11');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-046', '클린코드의비밀', '장수서', '에이프레스코리아', '컴퓨터', 0, '2005-10-12');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-047', '근대한국의탄생', '최서윤', '한국학출판사', '역사', 0, '2020-11-05');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-048', '몸과마음의균형', '조혜진', '건강출판사', '건강', 0, '2021-10-15');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-049', '붉은달의전설', '정준아', '블루문출판', '픽션', 0, '2022-11-16');
+INSERT INTO Books (ISBN, Title, Author, Publisher, Genre, IsBorrowed, RegistrationDate) VALUES ('20011227-050', '하드웨어와소프트웨어의조화', '정서민', '넥스트프레스', '컴퓨터', 0, '2020-12-21');
+
+
+-- 대출 테이블
+
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (01, 'eee', '20011227-003', '2024-12-01', '2024-12-15', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (02, 'bbb', '20011227-005', '2024-12-02', '2024-12-16', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (03, 'aaa', '20011227-007', '2014-12-03', '2024-12-17', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (04, 'jjj', '20011227-011', '2014-12-14', '2024-12-18', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (05, 'iii', '20011227-012', '2024-12-05', '2024-12-19', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (06, 'fff', '20011227-017', '2024-12-05', '2024-12-19', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (07, 'ggg', '20011227-019', '2024-12-04', '2024-12-18', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (08, 'ggg', '20011227-020', '2024-12-03', '2024-12-17', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (09, 'bbb', '20011227-021', '2024-12-02', '2024-12-16', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (10, 'aaa', '20011227-029', '2024-12-01', '2024-12-15', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (11, 'bbb', '20011227-031', '2024-12-06', '2024-12-20', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (12, 'hhh', '20011227-032', '2024-12-07', '2024-12-21', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (13, 'ddd', '20011227-033', '2024-12-08', '2024-12-22', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (14, 'ddd', '20011227-034', '2024-12-09', '2024-12-23', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (15, 'ccc', '20011227-043', '2024-12-06', '2024-12-20', NULL, 0);
+INSERT INTO Loan (loanId, memberId, ISBN, loanDate, returnDueDate, returnDate, overdueStatus)VALUES (16, 'bbb', '20011227-044', '2024-12-07', '2024-12-21', NULL, 0);
+
+
+
+-- 출판사 테이블
+
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (1, '한빛미디어');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (2, '더난출판사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (3, '예문사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (4, '문학동네');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (5, '우듬지');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (6, '청림출판');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (7, '민음사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (8, '을유문화사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (9, '알에이치코리아');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (10, '황금가지');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (11, '창비');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (12, '문예출판사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (13, '한빛비즈');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (14, '비즈니스북스');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (15, '한빛출판사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (16, '위즈덤하우스');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (17, '책세상');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (18, '한겨레출판');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (19, '부키');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (20, '다락원');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (21, '동아출판');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (22, '웅진씽크빅');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (23, '한국경제신문사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (24, '경영출판사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (25, '미래지식');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (26, '북하우스');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (27, '미래의창');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (28, '미래북스');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (29, '요리연구소');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (30, '문학세계사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (31, '더퍼블릭');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (32, '소담출판사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (33, '중원서적');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (34, '독립연구소');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (35, '타임북스');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (36, '바다출판사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (37, '마음연구소');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (38, '서원출판사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (39, '고고박사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (40, '키친스튜디오');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (41, '헬스앤피트니스');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (42, '에버그린출판');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (43, '검은달출판사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (44, '에이프레스코리아');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (45, '한국학출판사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (46, '건강출판사');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (47, '블루문출판');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (48, '넥스트프레스');
+INSERT INTO Publisher (publisherCode, publisherName) VALUES (49, '인사이트');
+
+
+-- 구매 테이블
+INSERT INTO Purchase (purchaseId, memberId, ISBN, purchaseDate, paymentMethod, purchaseStatus)VALUES (1, 'fff', '20011227-001', '2024-12-03', '신용카드', '완료');
+INSERT INTO Purchase (purchaseId, memberId, ISBN, purchaseDate, paymentMethod, purchaseStatus)VALUES (1, 'ggg', '20011227-004', '2024-12-03', '신용카드', '완료');
+
+create or replace NONEDITIONABLE PROCEDURE LoanBook (
+    p_memberId IN VARCHAR2,          -- 대출 회원 ID
+    p_ISBN IN VARCHAR2               -- 대출 도서 ISBN
+) AS
+    v_is_borrowed NUMBER;            -- 도서 대출 가능 여부 확인 변수
+    v_loan_id NUMBER;                -- 대출 ID 생성 변수
+BEGIN
+    -- 도서 대출 상태 확인
+    SELECT IsBorrowed INTO v_is_borrowed
+    FROM Books
+    WHERE ISBN = p_ISBN;             -- 입력된 ISBN이 대출 중인지 확인
+
+    -- 이미 대출 중인 경우 메시지 출력 후 프로시저 종료 (대출 불가)
+    IF v_is_borrowed = 1 THEN
+        DBMS_OUTPUT.PUT_LINE('도서가 이미 대출 중입니다.');
+        RETURN;
+    END IF;
+
+    -- loanId를 Loan 테이블의 데이터 수를 기반으로 생성 (수가 가장 큰 ID + 1 / 중복 x)
+    SELECT NVL(MAX(loan_Id), 0) + 1 INTO v_loan_id
+    FROM Loan;
+
+    -- 대출 진행 (Loan 테이블에 데이터 추가)
+    INSERT INTO Loan (loan_Id, memberId, ISBN, loanDate, returnDueDate)
+    VALUES (v_loan_id, p_memberId, p_ISBN, SYSDATE, SYSDATE + 14); -- 대출일은 현재 날짜, 반납 기한은 14일 후
+
+    -- 도서 대출 상태 변경 (Books 테이블에서 IsBorrowed를 1로 업데이트)
+    UPDATE Books
+    SET IsBorrowed = 1
+    WHERE ISBN = p_ISBN;
+
+    DBMS_OUTPUT.PUT_LINE('도서 대출 성공.'); -- 성공 메시지 출력
+END;
+
+
+create or replace NONEDITIONABLE PROCEDURE RegisterMember (
+    p_memberId IN VARCHAR2,          -- 회원 ID
+    p_memberpassword IN VARCHAR2,    -- 회원 비밀번호
+    p_membername IN VARCHAR2,        -- 회원 이름
+    p_phoneNumber IN VARCHAR2,       -- 회원 전화번호
+    p_address IN VARCHAR2            -- 회원 주소
+) AS
+    v_count NUMBER;                  -- ID 중복 여부 확인 변수
+BEGIN
+    -- ID 중복 검사
+    SELECT COUNT(*) INTO v_count
+    FROM Member
+    WHERE memberId = p_memberId;     -- 입력된 ID와 동일한 ID가 있는지 확인
+
+    -- 중복 ID가 존재할 경우 메시지 출력 후 프로시저 종료
+    IF v_count > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('이미 존재하는 아이디입니다.');
+        RETURN; -- 중복 ID로 인해 등록 중단
+    END IF;
+
+    -- 신규 회원 등록
+    INSERT INTO Member (memberId, memberpassword, membername, phoneNumber, address)
+    VALUES (p_memberId, p_memberpassword, p_membername, p_phoneNumber, p_address);
+    DBMS_OUTPUT.PUT_LINE('등록 성공'); -- 성공 메시지 출력
+END;
+
+
+
+create or replace NONEDITIONABLE PROCEDURE RemoveMember (
+    p_memberId IN VARCHAR2           -- 탈퇴 요청 회원 ID
+) AS
+    v_member_exists NUMBER;          -- 회원 존재 여부 확인 변수
+    v_loan_count NUMBER;             -- 대출 상태 확인 변수
+BEGIN
+    -- 회원 ID 존재 여부 확인
+    SELECT COUNT(*) INTO v_member_exists
+    FROM Member
+    WHERE memberId = p_memberId;     -- 입력된 ID가 Member 테이블에 존재하는지 확인
+
+    -- 회원이 존재하지 않을 경우 메시지 출력 후 프로시저 종료 (탈퇴 불가 / 데이터 없음)
+    IF v_member_exists = 0 THEN
+        DBMS_OUTPUT.PUT_LINE('존재하지 않는 회원 ID입니다.'); RETURN;
+    END IF;
+
+    -- 대출 상태 확인 (반납되지 않은 도서 존재 여부)
+    SELECT COUNT(*) INTO v_loan_count
+    FROM Loan
+    WHERE memberId = p_memberId AND returnDate IS NULL; -- 반납되지 않은 도서 확인
+
+    -- 반납되지 않은 도서가 존재할 경우 메시지 출력 후 프로시저 종료 (탈퇴 실패)
+    IF v_loan_count > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('대출중인 도서가 남아있습니다. 반납 후 다시 시도해주세요.'); RETURN;
+    END IF;
+
+    -- 대출중인 도서가 없고, 이미 있는 회원인 경우
+    -- 자식 테이블 데이터 삭제
+    DELETE FROM Loan WHERE memberId = p_memberId;      -- Loan 테이블의 해당 회원 데이터 삭제
+    DELETE FROM Purchase WHERE memberId = p_memberId;  -- Purchase 테이블의 해당 회원 데이터 삭제
+    -- 회원 데이터 삭제
+    DELETE FROM Member WHERE memberId = p_memberId;    -- Member 테이블의 회원 데이터 삭제
+    DBMS_OUTPUT.PUT_LINE('회원과 관련된 모든 데이터가 삭제되었습니다.'); -- 성공 메시지 출력
+END;
+
+
+create or replace NONEDITIONABLE TRIGGER trg_loan_id
+BEFORE INSERT ON Loan
+FOR EACH ROW
+BEGIN
+  -- loan_id가 NULL이면 시퀀스를 이용해 자동으로 값을 넣음
+  IF :NEW.loan_id IS NULL THEN
+    SELECT loan_seq.NEXTVAL
+    INTO :NEW.loan_id
+    FROM dual;
+  END IF;
+END;
+
+
+create or replace NONEDITIONABLE TRIGGER trg_loan_status
+-- Loan 테이블에서 도서 대출 또는 도서 반납 작업이 발생할 때 실행
+FOR INSERT OR UPDATE ON Loan
+COMPOUND TRIGGER
+    -- 연체 상태를 저장할 변수 선언
+    TYPE OverdueMemberList IS TABLE OF Loan.memberId%TYPE;
+    overdue_members OverdueMemberList := OverdueMemberList();
+    -- 회원 등급 갱신에 사용할 변수 선언
+    TYPE UpdatedMemberList IS TABLE OF Loan.memberId%TYPE;
+    updated_members UpdatedMemberList := UpdatedMemberList();
+    -- 각 행에 대해 삽입 또는 갱신 작업이 발생하기 전에 실행
+    BEFORE EACH ROW IS
+    BEGIN
+        -- 도서 대출 처리
+        IF INSERTING THEN
+            -- 연체 상태 확인
+            DECLARE
+                v_overdue_status NUMBER; -- 연체 카운트 변수
+            BEGIN
+                SELECT COUNT(*)
+                INTO v_overdue_status
+                FROM Loan
+                WHERE memberId = :NEW.memberId AND overdueStatus = 1; -- 연체 상태인 도서가 있는지 확인
+                -- 연체 상태가 있는 경우 대출 불가능
+                IF v_overdue_status > 0 THEN
+                    -- 사용자 정의 에러
+                    RAISE_APPLICATION_ERROR(-20005, '연체 상태로 인해 대출이 불가능합니다.');
+                END IF;
+            END;
+
+            -- 도서가 정상적으로 대출되면 Books 테이블의 해당 ISBN에 대해 대출 상태(IsBorrowed)를 1로 설정
+            UPDATE Books
+            SET IsBorrowed = 1
+            WHERE ISBN = :NEW.ISBN; -- 대출된 도서의 ISBN 참조
+        END IF;
+
+        -- 도서 반납 처리
+        IF UPDATING AND :NEW.returnDate IS NOT NULL THEN
+            -- 반납 시 연체 상태 확인 및 저장
+            IF :NEW.overdueStatus = 1 THEN
+                overdue_members.EXTEND; -- 리스트 크기 확장
+                overdue_members(overdue_members.COUNT) := :NEW.memberId; -- 연체 상태 회원 ID 저장
+            END IF;
+
+            -- 도서가 정상적으로 반납되면 Books 테이블의 해당 ISBN에 대해 대출 상태(IsBorrowed)를 0으로 설정
+            UPDATE Books
+            SET IsBorrowed = 0
+            WHERE ISBN = :NEW.ISBN; -- 반납된 도서의 ISBN 참조
+
+            -- 변경된 회원 ID 저장 (해당 회원의 등급 조정 시도)
+            updated_members.EXTEND;
+            updated_members(updated_members.COUNT) := :NEW.memberId;
+        END IF;
+    END BEFORE EACH ROW;
+
+    -- 모든 행 작업이 완료된 후 실행
+    AFTER STATEMENT IS
+    BEGIN
+        -- overdue_members 리스트를 순회하여 연체 상태 초기화 (mutation 방지)
+        FOR i IN 1..overdue_members.COUNT LOOP -- 연체 상태를 가졌던 멤버들만 탐색
+            UPDATE Loan
+            SET overdueStatus = 0
+            WHERE memberId = overdue_members(i) AND returnDate IS NOT NULL; -- 반납일이 있는 경우 연체 상태를 초기화
+        END LOOP;
+
+        -- 회원 등급 갱신
+        FOR i IN 1..updated_members.COUNT LOOP -- 변동사항이 있는 멤버들만 탐색
+            UPDATE Member m
+            SET membership = CASE
+                WHEN (
+                    -- Loan 테이블의 대출 날짜가 지난달의 시작일 이후인 대출 건수 조회(현재 갱신중인 회원)   >=   지난 달의 시작 날짜
+                    (SELECT COUNT(*) FROM Loan l WHERE l.memberId = updated_members(i) AND loanDate >= TRUNC(ADD_MONTHS(SYSDATE, -1), 'MM')) +
+                    -- 위와 동일한 방식의 도서 구매 건수 (대출건수 + 구매건수 합산)
+                    (SELECT COUNT(*) FROM Purchase p WHERE p.memberId = updated_members(i) AND purchaseDate >= TRUNC(ADD_MONTHS(SYSDATE, -1), 'MM'))
+                ) >= 12 THEN 'diamond' -- 12건 이상: diamond
+                WHEN (
+                    (SELECT COUNT(*) FROM Loan l WHERE l.memberId = updated_members(i) AND loanDate >= TRUNC(ADD_MONTHS(SYSDATE, -1), 'MM')) +
+                    (SELECT COUNT(*) FROM Purchase p WHERE p.memberId = updated_members(i) AND purchaseDate >= TRUNC(ADD_MONTHS(SYSDATE, -1), 'MM'))
+                ) >= 8 THEN 'gold' -- 8건 이상: gold
+                WHEN (
+                    (SELECT COUNT(*) FROM Loan l WHERE l.memberId = updated_members(i) AND loanDate >= TRUNC(ADD_MONTHS(SYSDATE, -1), 'MM')) +
+                    (SELECT COUNT(*) FROM Purchase p WHERE p.memberId = updated_members(i) AND purchaseDate >= TRUNC(ADD_MONTHS(SYSDATE, -1), 'MM'))
+                ) >= 4 THEN 'silver' -- 4건 이상: silver
+                ELSE 'bronze' -- 그 외: bronze
+            END
+            WHERE m.memberId = updated_members(i);
+        END LOOP;
+    END AFTER STATEMENT;
+END;
+
+
+create or replace NONEDITIONABLE TRIGGER trg_member_del
+AFTER DELETE ON Member
+FOR EACH ROW
+BEGIN
+    -- 트리거에서 삭제 진행 시, mutation 발생함
+    DBMS_OUTPUT.PUT_LINE('회원 삭제 요청이 처리되었습니다: ' || :OLD.memberId);
+END;
+
+
+
+create or replace NONEDITIONABLE TRIGGER trg_member_operations
+BEFORE INSERT OR UPDATE ON Member
+FOR EACH ROW
+BEGIN
+    IF INSERTING THEN -- 회원 등록 시 처리
+        -- 신규 회원 등록 시, 기본 등급을 'bronze'로 설정
+        :NEW.membership := 'bronze';
+        -- 가입 날짜를 현재 날짜(SYSDATE)로 설정
+        :NEW.joinDate := SYSDATE;
+    END IF;
+
+    -- 회원 정보 수정 시 처리
+    IF UPDATING THEN
+        -- 비밀번호 유효성 검사: NULL이 아니고 최소 6자 이상이어야 함
+        IF :NEW.memberpassword IS NULL OR LENGTH(:NEW.memberpassword) < 6 THEN
+            RAISE_APPLICATION_ERROR(-20001, '비밀번호의 길이가 6자 미만입니다.');
+        END IF;
+
+        -- 전화번호 유효성 검사: NULL이 아니고 최소 10자 이상이어야 함
+        IF :NEW.phoneNumber IS NULL OR LENGTH(:NEW.phoneNumber) < 10 THEN
+            RAISE_APPLICATION_ERROR(-20002, '유효한 전화번호 형식이 아닙니다.');
+        END IF;
+
+        -- 주소 유효성 검사: NULL이 아니고 최대 길이 180자를 초과하지 않아야 함
+        IF :NEW.address IS NOT NULL AND LENGTH(:NEW.address) > 180 THEN
+            RAISE_APPLICATION_ERROR(-20003, '주소가 180자를 초과하였습니다.');
+        END IF;
+    END IF;
+END;
+
+
+
